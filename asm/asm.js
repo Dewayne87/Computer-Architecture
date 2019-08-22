@@ -15,7 +15,7 @@
  *  DB 12   ; a decimal byte
  *  DB 0b0001 ; a binary byte
  */
-
+// initial commit
 const fs = require('fs');
 const readline = require('readline');
 
