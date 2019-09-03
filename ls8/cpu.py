@@ -6,10 +6,10 @@ LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
-CMP = 0b10000010
+CMP = 0b10100111
 JMP = 0b01000111
-JEQ = 0b00000001
-JNE = 0b10100010
+JEQ = 0b01010101
+JNE = 0b01010110
 RET = 0b00010001
 
 class CPU:
@@ -30,8 +30,8 @@ class CPU:
             PRN: self.op_prn,
             JMP: self.op_jmp,
             CMP: self.op_cmp,
-            JEQ: self.op_jeq,
-            JNE: self.op_jne,
+            # JEQ: self.op_jeq,
+            # JNE: self.op_jne,
             RET: self.op_ret
 
 
@@ -58,16 +58,17 @@ class CPU:
     
     def op_jne(self,op_a,op_b):
         flag = (self.FL & 0b1) == 1
-        if not flag:
+        if flag == False:
             self.op_jmp(op_a,op_b)
+        else:
+            self.pc +=2
 
     def op_cmp(self,addr1,addr2):
         self.alu("CMP",addr1,addr2)
 
     def op_jmp(self,op_a,op_b):
-        register_address = self.ram[op_a]
-        address_to_jump_to = self.reg[register_address]
-        self.pc = address_to_jump_to
+
+        self.pc = self.reg[op_a]
 
     def op_ret(self,op_a,op_b):
         SP = self.reg[7]
@@ -76,8 +77,11 @@ class CPU:
 
     def op_jeq(self,op_a,op_b):
         flag = (self.FL & 0b1) == 1
-        if flag:
+        print(flag)
+        if flag == True:
             self.op_jmp(op_a,op_b)
+        else:
+            self.pc += 2
 
 
     def load(self,filename):
@@ -105,7 +109,7 @@ class CPU:
                 comment_split = line.split('#')
                 instruction = comment_split[0]
 
-                if instruction == '':
+                if instruction == '' or instruction == '\n':
                     continue
                 first_bit = instruction[0]
                 if first_bit == '0' or first_bit == '1':
@@ -116,20 +120,19 @@ class CPU:
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
-        print(self.reg[reg_a],"here")
+        # print(self.reg[reg_a],self.reg[reg_b])
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
+            
         elif op == "CMP":
-            if self.reg[reg_a] > self.reg[reg_b]:
-                print(self.reg[reg_a])
-                self.FL = 0b00000010
+            # print(self.reg[reg_a],self.reg[reg_b],"h")
             if self.reg[reg_a] == self.reg[reg_b]:
                 self.FL = 0b00000001
-            if self.reg[reg_a] < self.reg[reg_b]:
-                self.FL = 0b00000100
+                print(self.FL)
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -155,6 +158,7 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+        self.trace()
         # LDI = 0b10000010
         # PRN = 0b01000111
         # HLT = 0b00000001
