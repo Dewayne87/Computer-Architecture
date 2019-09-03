@@ -1,6 +1,7 @@
 """CPU functionality."""
 
 import sys
+import time
 
 LDI = 0b10000010
 PRN = 0b01000111
@@ -30,8 +31,8 @@ class CPU:
             PRN: self.op_prn,
             JMP: self.op_jmp,
             CMP: self.op_cmp,
-            # JEQ: self.op_jeq,
-            # JNE: self.op_jne,
+            JEQ: self.op_jeq,
+            JNE: self.op_jne,
             RET: self.op_ret
 
 
@@ -159,6 +160,7 @@ class CPU:
     def run(self):
         """Run the CPU."""
         self.trace()
+        time.sleep(1)
         # LDI = 0b10000010
         # PRN = 0b01000111
         # HLT = 0b00000001
