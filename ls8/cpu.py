@@ -8,7 +8,7 @@ PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
 CMP = 0b10100111
-JMP = 0b01000111
+JMP = 0b01010100
 JEQ = 0b01010101
 JNE = 0b01010110
 RET = 0b00010001
@@ -21,7 +21,7 @@ class CPU:
         self.reg = [0] * 8
         self.ram = [0] * 256
         self.pc = 0
-        self.FL = 0b00000000
+        self.FL = False
         self.hlt = False
 
         self.ops ={
@@ -78,7 +78,6 @@ class CPU:
 
     def op_jeq(self,op_a,op_b):
         flag = (self.FL & 0b1) == 1
-        print(flag)
         if flag == True:
             self.op_jmp(op_a,op_b)
         else:
@@ -132,7 +131,8 @@ class CPU:
             # print(self.reg[reg_a],self.reg[reg_b],"h")
             if self.reg[reg_a] == self.reg[reg_b]:
                 self.FL = 0b00000001
-                print(self.FL)
+            else:
+                self.FL = 0b00000000
 
         else:
             raise Exception("Unsupported ALU operation")
@@ -159,8 +159,6 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        self.trace()
-        time.sleep(1)
         # LDI = 0b10000010
         # PRN = 0b01000111
         # HLT = 0b00000001
