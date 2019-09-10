@@ -5,7 +5,11 @@
 import sys
 from cpu import *
 
-cpu = CPU()
+if len(sys.argv) == 2:
 
-cpu.load()
-cpu.run()
+    cpu = CPU()
+    cpu.load(sys.argv[1])
+    cpu.run()
+else:
+    print("Error")
+    sys.exit(1)
